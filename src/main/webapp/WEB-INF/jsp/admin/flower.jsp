@@ -95,7 +95,7 @@
                 <div class="page-header float-right">
                     <div class="page-title">
                         <ol class="breadcrumb text-right">
-                            <li class="active add-career"><span class="fa fa-plus" style="cursor: pointer;"></span></li>
+                            <li class="active add-product" data-type-id="1"><span class="fa fa-plus" style="cursor: pointer;"></span></li>
                         </ol>
                     </div>
                 </div>
@@ -111,7 +111,7 @@
                                                     <strong class="card-title">Data Table</strong>
                                                 </div>-->
                         <div class="card-body">
-                            <table id="career_list" class="table table-striped table-bordered">
+                            <table id="product_list" class="table table-striped table-bordered">
                                 <thead>
                                     <tr>
                                         <th>Adı</th>
@@ -130,30 +130,33 @@
                 </div>
             </div>
 
-            <div class="modal fade bs-example-modal-lg career_modal" tabicommon_selling_modalndex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+            <div class="modal fade bs-example-modal-lg product_modal" tabicommon_selling_modalndex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
 
                         <div class="modal-header">
                             <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>-->
-                            <h4 class="modal-title" id="myLargeModalLabel">Karyera haqqında məlumat</h4>
+                            <h4 class="modal-title" id="myLargeModalLabel">Məhsul məlumat</h4>
                         </div>
                         <div class="modal-body">
-                            <form id="career-form">
+                            <form id="product-form">
                                 
                                 <div class="row form-group">
-                                    <div class="col col-md-3"><label for="product_name" class=" form-control-label">Məbləğ</label></div>
-                                    <div class="col-12 col-md-4"><input type="text" id="startSalary" name="text-input" placeholder="" class="form-control"></div>
-                                    <div class="col-12 col-md-1"></div>
-                                    <div class="col-12 col-md-4"><input type="text" id="endSalary" name="text-input" placeholder="" class="form-control"></div>
-                                    
+                                    <div class="col col-md-3"><label for="product_name" class=" form-control-label">Tipi</label></div>
+                                    <div class="col-12 col-md-9"><select type="text" id="categoryId" name="text-input" placeholder="" class="form-control"></select></div>
+                                </div>
+                                
+                                <div class="row form-group">
+                                    <div class="col col-md-3"><label for="product_name" class=" form-control-label">Qiyməti</label></div>
+                                    <div class="col-12 col-md-9"><input type="text" id="price" name="text-input" placeholder="" class="form-control"></div>
                                 </div>
                                 <div class="row form-group">
-                                    <div class="col col-md-3"><label for="product_name" class=" form-control-label">Tarix</label></div>
-                                    <div class="col-12 col-md-4"><input type="text" id="startDate" name="text-input" placeholder="" class="form-control"></div>
-                                    <div class="col-12 col-md-1"></div>
-                                    <div class="col-12 col-md-4"><input type="text" id="endDate" name="text-input" placeholder="" class="form-control"></div>
-                                    
+                                    <div class="col col-md-3"><label for="product_name" class=" form-control-label">Endirimli qiymət</label></div>
+                                    <div class="col-12 col-md-9"><input type="text" id="sale" name="text-input" placeholder="" class="form-control"></div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col col-md-3"><label for="product_name" class=" form-control-label">Sayı</label></div>
+                                    <div class="col-12 col-md-9"><input type="number" id="count" name="text-input" placeholder="" class="form-control"></div>
                                 </div>
                                 <div class="row form-group">
                                     <div class="col col-md-3"><label for="product_name" class=" form-control-label">Başlıq(AZ)</label></div>
@@ -187,23 +190,22 @@
                                     </div>
                                 </div>
                                 <div class="row form-group active-file-type">
-                                    <div class="col col-md-3"><label for="product_files" class=" form-control-label">Şəkil</label></div>
-                                    <div class="col-12 col-md-9"><input type="file" id="product_files" class="form-control-file"></div>
+                                    <!--<div class="col col-md-3"><label for="product_files" class=" form-control-label">Şəkil</label></div>-->
+                                    <div class="col-12 col-md-9"><input type="file" multiple="" id="product_files" class="form-control-file"></div>
+                                </div>
+                                <div class="row form-group ">
+                                    <p class="col pull-right" style="font-weight: 700;padding-right: 15px;">
+                                        <span style="display: inline-block;margin-right: 10px;">Ən çox satılan</span>
+                                        <label class="switch switch-3d switch-danger mr-3"><input value = "47" data-type='check' type="checkbox" class="switch-input career_status" checked="true"> <span class="switch-label"></span> <span class="switch-handle"></span></label>
+                                    </p>
                                 </div>
                             </form>
                             
-                            
-                            <div class="row form-group ">
-                                <p class="col pull-right" style="font-weight: 700;padding-right: 15px;">
-                                    <span style="display: inline-block;margin-right: 10px;">Status</span>
-                                    <label class="switch switch-3d switch-danger mr-3"><input value = "47" data-type='check' type="checkbox" class="switch-input career_status" checked="true"> <span class="switch-label"></span> <span class="switch-handle"></span></label>
-                                </p>
-                            </div>
                         </div>
                         <div class="modal-footer">
 
                             <button type="button" class="btn btn-default" data-dismiss="modal">Bağla</button>
-                            <button type="button" class="btn btn-primary btn-ndu-career">Təsdiq et</button>
+                            <button type="button" class="btn btn-primary btn-ndu-product">Təsdiq et</button>
 
                         </div>
                     </div>
@@ -215,35 +217,48 @@
             $(function () {
 
                 $('#main-menu a i[data-type="flower"]').parents('li').addClass('active');
-                
+                Product.Proxy.getDictionariesByType('11', function(data) {
+                    if(data) {
+                        var html = "";
+                        $.each(data, function(i, v){
+                            if(v.parentId == 0)
+                                html += '<option value = '+v.id+'>'+v.value.az+'</option>'
+                        })
+                        
+                        $('#categoryId').html(html);
+                        
+                    }
+                })
                 
 //                $('#startDate').fdatepicker({format: 'dd/mm/yyyy'})
 //                $('#endDate').fdatepicker({format: 'dd/mm/yyyy'})
-//                
-//                Product.Proxy.getCareerList('', function (data) {
-//                    if (data && data.data) {
-//                        var html = '';
-//                            $.each(data.data, function (i, v) {
+                var  form = {
+                    type:1
+                }
+                Product.Proxy.getProductList(form, function (data) {
+                    if (data && data.data) {
+                        var html = '';
+                            $.each(data.data, function (i, v) {
 //                                var descriptionLength = v.descriptionAz ? v.descriptionAz.length : 0;
 //                                var description = v.descriptionAz;
 //                                if(descriptionLength > 20) {
 //                                    description = v.descriptionAz.substring(0,20) + '...';
 //                                } 
-//                                html += '<tr>' +
-//                                        '<td>' + v.titleAz + '</th>' +
-//                                        '<td>' + (v.startDate +' - '+ v.endDate) + '</td>' +
-//                                        '<td>' + (v.startSalary +' - '+ v.endSalary) + '</td>' +
-//                                        '<td>' + (v.status.value.az) + '</td>' +
+                                html += '<tr>' +
+                                        '<td>' + v.title.az + '</th>' +
+                                        '<td>' + (v.category.value.az) + '</td>' +
+                                        '<td>' + (v.price) + '</td>' +
+                                        '<td>' + (v.count) + '</td>' +
 //                                        '<td>' + description + '</td>' +
-//                                        '<td><i class="fa fa-remove remove-career" data-id="' + v.id + '"></i>' +
-//                                        '<i class="fa fa-edit edit-career" data-id = "' + v.id + '"></i></td>' +
-//                                        '</tr>'
-//                            })
-//                            $('#career_list tbody').html(html);
-                            $('#career_list').DataTable();
-//                    }
-//
-//                })
+                                        '<td><i class="fa fa-remove remove-product" data-id="' + v.id + '"></i>' +
+                                        '<i class="fa fa-edit edit-product" data-id = "' + v.id + '"></i></td>' +
+                                        '</tr>'
+                            })
+                            $('#product_list tbody').html(html);
+                            $('#product_list').DataTable();
+                    }
+
+                })
 
             })
 

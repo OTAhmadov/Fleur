@@ -172,6 +172,10 @@
                                     <div class="col col-md-3"><label for="product_note" class=" form-control-label">Kontent(RU)</label></div>
                                     <div class="col-12 col-md-9"><textarea id="descriptionRu" rows="6" class="form-control"></textarea></div>
                                 </div>
+                                <div class="row form-group">
+                                    <div class="col col-md-3"><label for="product_name" class=" form-control-label">Endirim faizi</label></div>
+                                    <div class="col-12 col-md-9"><input type="number" id="sale" name="text-input" placeholder="" class="form-control"></div>
+                                </div>
                                 <div class="row form-group hidden active-file-div">
                                     <div class="col col-md-3"><label for="product_files" class=" form-control-label">Şəkil</label></div>
                                     <div class="col-12 col-md-9 image-content-div">

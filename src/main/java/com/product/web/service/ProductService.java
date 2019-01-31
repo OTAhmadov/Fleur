@@ -132,10 +132,15 @@ public class ProductService implements IProductService {
         return this.adminDao.removeFile(accountId, path);
     }
     
+    @Override
+     public OperationResponse changeFileDetails(FileWrapperForm form) {
+        return this.adminDao.changeFileDetails(form);
+    }
+    
     
     @Override
-    public OperationResponse addProductFile(Account account, int productId, FileWrapperForm form) {
-        return this.adminDao.addProductFile(account, productId, form);
+    public OperationResponse addProductFile(ProductForm form) {
+        return this.adminDao.addProductFile(form);
     }
     
     @Override

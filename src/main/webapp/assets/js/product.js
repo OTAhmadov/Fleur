@@ -9,7 +9,7 @@ var Product = {
     lang: 'az',
     rootUrl: '',
     checkQuestion:[],
-    url:'http://localhost:8080/Azcargo188',
+    url:'http://localhost:8080/FleurPrivee',
     module:[
         {
             home:{
@@ -272,10 +272,10 @@ var Product = {
             });
         },
         
-        addProductFiles: function (productId, formData, callback) {
+        addProductFiles: function (formData, callback) {
             
             $.ajax({
-                url: Product.rootUrl + "product/" + productId + '/file/add',
+                url: Product.rootUrl + 'product/file/add',
                 type: 'POST',
                 data: formData,
                 contentType: false,
@@ -334,10 +334,41 @@ var Product = {
                 }
             })
         },
-        nduAchievement: function (formData, callback) {
+        nduProduct: function (formData, callback) {
             
             $.ajax({
-                url: Product.rootUrl + "achievement/ndu",
+                url: Product.rootUrl + "product/ndu",
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (result) {
+                    if (result) {
+                        switch (result.code) {
+                            case Product.statusCodes.OK:
+
+                                if (callback) {
+                                    callback(result);
+                                }
+                                break;
+
+                            case Product.statusCodes.ERROR:
+                                if (result.message) {
+                                    alert(result.message.az) 
+                                } else {
+                                   alert('Xeta bas verdi') 
+                                }
+                                break;
+
+                        }
+                    }
+                }
+            })
+        },
+        nduEvent: function (formData, callback) {
+            
+            $.ajax({
+                url: Product.rootUrl + "event/ndu",
                 type: 'POST',
                 data: formData,
                 contentType: false,
@@ -456,10 +487,10 @@ var Product = {
                 }
             })
         },
-        getAchievementList: function (form, callback) {
+        getEventList: function (form, callback) {
             
             $.ajax({
-                url: Product.rootUrl + "achievements",
+                url: Product.rootUrl + "events",
                 type: 'GET',
                 data: form,
                 success: function (result) {
@@ -485,10 +516,10 @@ var Product = {
                 }
             })
         },
-        getCareerList: function (form, callback) {
+        getProductList: function (form, callback) {
             
             $.ajax({
-                url: Product.rootUrl + "careers",
+                url: Product.rootUrl + "products",
                 type: 'GET',
                 data: form,
                 success: function (result) {
@@ -686,10 +717,10 @@ var Product = {
                 }
             })
         },
-        getAchievementDetails: function (id, callback) {
+        getEventDetails: function (id, callback) {
             
             $.ajax({
-                url: Product.rootUrl + "achievement/"+id,
+                url: Product.rootUrl + "event/"+id,
                 type: 'GET',
                 success: function (result) {
                     if (result) {
@@ -742,11 +773,14 @@ var Product = {
                 }
             })
         },
-        getCareerDetails: function (id, callback) {
+        getProductDetails: function (id, typeId, callback) {
             
             $.ajax({
-                url: Product.rootUrl + "career/"+id,
+                url: Product.rootUrl + "product/"+id,
                 type: 'GET',
+                data:{
+                  type:typeId 
+                },
                 success: function (result) {
                     if (result) {
                         switch (result.code) {
@@ -1060,6 +1094,35 @@ var Product = {
             $.ajax({
                 url: Product.rootUrl + "contacts",
                 type: 'GET',
+                success: function (result) {
+                    if (result) {
+                        switch (result.code) {
+                            case Product.statusCodes.OK:
+
+                                if (callback) {
+                                    callback(result);
+                                }
+                                break;
+
+                            case Product.statusCodes.ERROR:
+                                if (result.message) {
+                                    
+                                } else {
+                                   alert('Xeta bas verdi') 
+                                }
+                                break;
+
+                        }
+                    }
+                }
+            })
+        },
+        changeFileDetails: function (path, form, callback) {
+            
+            $.ajax({
+                url: Product.rootUrl + "file/"+path+"/change/details",
+                type: 'POST',
+                data:form,
                 success: function (result) {
                     if (result) {
                         switch (result.code) {

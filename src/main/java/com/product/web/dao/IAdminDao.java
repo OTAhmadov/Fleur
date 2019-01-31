@@ -68,8 +68,9 @@ public interface IAdminDao {
     
     public FileWrapper getFileByPath(String path);
     public OperationResponse removeFile(int accountId, String path);
+    public OperationResponse changeFileDetails(FileWrapperForm form);
     
-    public OperationResponse addProductFile(Account account, int productId, FileWrapperForm form);
+    public OperationResponse addProductFile(ProductForm form);
     public OperationResponse addOtherFile(Account account, FileWrapperForm form);
     public List<FileWrapper> getOtherFile();
     

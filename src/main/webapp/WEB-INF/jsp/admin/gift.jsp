@@ -95,7 +95,7 @@
                 <div class="page-header float-right">
                     <div class="page-title">
                         <ol class="breadcrumb text-right">
-                            <li class="active add-product"><span class="fa fa-plus" style="cursor: pointer;"></span></li>
+                            <li class="active add-product" data-type-id="2"><span class="fa fa-plus" style="cursor: pointer;"></span></li>
                         </ol>
                     </div>
                 </div>
@@ -135,118 +135,77 @@
                     <div class="modal-content">
 
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                            <h4 class="modal-title" id="myLargeModalLabel">Yeni məhsulun əlavə edilməsi</h4>
+                            <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>-->
+                            <h4 class="modal-title" id="myLargeModalLabel">Məhsul məlumat</h4>
                         </div>
                         <div class="modal-body">
-                            <div class="row form-group">
-                                <div class="col col-md-3"><label for="select" class=" form-control-label">Tipi</label></div>
-                                <div class="col-12 col-md-9">
-                                    <select name="select" id="product_type" class="form-control">
-
-                                    </select>
+                            <form id="product-form">
+                                
+                                <div class="row form-group">
+                                    <div class="col col-md-3"><label for="product_name" class=" form-control-label">Tipi</label></div>
+                                    <div class="col-12 col-md-9"><select type="text" id="categoryId" name="text-input" placeholder="" class="form-control"></select></div>
                                 </div>
-                            </div>
-                            <div class="row form-group">
-                                <div class="col col-md-3"><label for="product_name" class=" form-control-label">Adı</label></div>
-                                <div class="col-12 col-md-9"><input type="text" id="product_name" name="text-input" placeholder="" class="form-control"></div>
-                            </div>
-                            <div class="row form-group">
-                                <div class="col col-md-3"><label for="product_count" class=" form-control-label">Sayı</label></div>
-                                <div class="col-12 col-md-9"><input type="number" id="product_count" name="text-input" placeholder="" class="form-control"></div>
-                            </div>
-                            <div class="row form-group">
-                                <div class="col col-md-3"><label for="product_price" class=" form-control-label">Qiyməti</label></div>
-                                <div class="col-12 col-md-9"><input type="text" id="product_price"  class="form-control"></div>
-                            </div>
-                            <div class="row form-group">
-                                <div class="col col-md-3"><label for="product_files" class=" form-control-label">Şəkil</label></div>
-                                <div class="col-12 col-md-9"><input type="file" id="product_files"  multiple="" class="form-control-file"></div>
-                            </div>
-                            <div class="row form-group">
-                                <div class="col col-md-3"><label for="product_reciept" class=" form-control-label">Resept</label></div>
-                                <div class="col-12 col-md-9"><textarea id="product_reciept" rows="6" class="form-control"></textarea></div>
-                            </div>
-                            <div class="row form-group">
-                                <div class="col col-md-3"><label for="product_note" class=" form-control-label">Qeyd</label></div>
-                                <div class="col-12 col-md-9"><textarea id="product_note" rows="6" class="form-control"></textarea></div>
-                            </div>
-                            <div class="row form-group">
-                                <p class="col pull-right" style="font-weight: 700;padding-right: 15px;">
-                                    <span style="display: inline-block;margin-right: 10px;">Seçilmiş</span>
-                                    <label class="switch switch-3d switch-danger mr-3"><input data-type='uncheck' type="checkbox" class="switch-input product_priority"> <span class="switch-label"></span> <span class="switch-handle"></span></label>
-                                </p>
-                            </div>
+                               
+                                <div class="row form-group">
+                                    <div class="col col-md-3"><label for="product_name" class=" form-control-label">Qiyməti</label></div>
+                                    <div class="col-12 col-md-9"><input type="text" id="price" name="text-input" placeholder="" class="form-control"></div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col col-md-3"><label for="product_name" class=" form-control-label">Endirimli qiymət</label></div>
+                                    <div class="col-12 col-md-9"><input type="text" id="sale" name="text-input" placeholder="" class="form-control"></div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col col-md-3"><label for="product_name" class=" form-control-label">Sayı</label></div>
+                                    <div class="col-12 col-md-9"><input type="number" id="count" name="text-input" placeholder="" class="form-control"></div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col col-md-3"><label for="product_name" class=" form-control-label">Başlıq(AZ)</label></div>
+                                    <div class="col-12 col-md-9"><input type="text" id="titleAz" name="text-input" placeholder="" class="form-control"></div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col col-md-3"><label for="product_name" class=" form-control-label">Başlıq(EN)</label></div>
+                                    <div class="col-12 col-md-9"><input type="text" id="titleEn" name="text-input" placeholder="" class="form-control"></div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col col-md-3"><label for="product_name" class=" form-control-label">Başlıq(RU)</label></div>
+                                    <div class="col-12 col-md-9"><input type="text" id="titleRu" name="text-input" placeholder="" class="form-control"></div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col col-md-3"><label for="product_note" class=" form-control-label">Kontent(AZ)</label></div>
+                                    <div class="col-12 col-md-9"><textarea id="descriptionAz" rows="6" class="form-control"></textarea></div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col col-md-3"><label for="product_note" class=" form-control-label">Kontent(EN)</label></div>
+                                    <div class="col-12 col-md-9"><textarea id="descriptionEn" rows="6" class="form-control"></textarea></div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col col-md-3"><label for="product_note" class=" form-control-label">Kontent(RU)</label></div>
+                                    <div class="col-12 col-md-9"><textarea id="descriptionRu" rows="6" class="form-control"></textarea></div>
+                                </div>
+                                <div class="row form-group hidden active-file-div">
+                                    <div class="col col-md-3"><label for="product_files" class=" form-control-label">Şəkil</label></div>
+                                    <div class="col-12 col-md-9 image-content-div">
+
+
+                                    </div>
+                                </div>
+                                <div class="row form-group active-file-type">
+                                    <!--<div class="col col-md-3"><label for="product_files" class=" form-control-label">Şəkil</label></div>-->
+                                    <div class="col-12 col-md-9"><input type="file" multiple="" id="product_files" class="form-control-file"></div>
+                                </div>
+                                <div class="row form-group ">
+                                    <p class="col pull-right" style="font-weight: 700;padding-right: 15px;">
+                                        <span style="display: inline-block;margin-right: 10px;">Ən çox satılan</span>
+                                        <label class="switch switch-3d switch-danger mr-3"><input value = "47" data-type='check' type="checkbox" class="switch-input career_status" checked="true"> <span class="switch-label"></span> <span class="switch-handle"></span></label>
+                                    </p>
+                                </div>
+                            </form>
+                            
                         </div>
                         <div class="modal-footer">
 
                             <button type="button" class="btn btn-default" data-dismiss="modal">Bağla</button>
                             <button type="button" class="btn btn-primary btn-ndu-product">Təsdiq et</button>
-
-                        </div>
-                    </div>
-                </div>
-            </div>    
-            <div class="modal fade bs-example-modal-lg product_edit_modal" tabicommon_selling_modalndex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                            <h4 class="modal-title" id="myLargeModalLabel">Məhsulun redaktə edilməsi</h4>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row form-group">
-                                <div class="col col-md-3"><label for="select" class=" form-control-label">Tipi</label></div>
-                                <div class="col-12 col-md-9">
-                                    <select name="select" id="edit_product_type" class="form-control">
-
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row form-group">
-                                <div class="col col-md-3"><label for="product_name" class=" form-control-label">Adı</label></div>
-                                <div class="col-12 col-md-9"><input type="text" id="edit_product_name" name="text-input" placeholder="" class="form-control"></div>
-                            </div>
-                            <div class="row form-group">
-                                <div class="col col-md-3"><label for="product_count" class=" form-control-label">Sayı</label></div>
-                                <div class="col-12 col-md-9"><input type="number" id="edit_product_count" name="text-input" placeholder="" class="form-control"></div>
-                            </div>
-                            <div class="row form-group">
-                                <div class="col col-md-3"><label for="product_price" class=" form-control-label">Qiyməti</label></div>
-                                <div class="col-12 col-md-9"><input type="text" id="edit_product_price"  class="form-control"></div>
-                            </div>
-
-                            <div class="row form-group">
-                                <div class="col col-md-3"><label for="product_reciept" class=" form-control-label">Resept</label></div>
-                                <div class="col-12 col-md-9"><textarea id="edit_product_reciept" rows="6" class="form-control"></textarea></div>
-                            </div>
-                            <div class="row form-group">
-                                <div class="col col-md-3"><label for="product_note" class=" form-control-label">Qeyd</label></div>
-                                <div class="col-12 col-md-9"><textarea id="edit_product_note" rows="6" class="form-control"></textarea></div>
-                            </div>
-                            <div class="row form-group">
-                                <div class="col col-md-3"><label for="product_files" class=" form-control-label">Şəkil</label></div>
-                                <div class="col-12 col-md-9 image-content-div">
-
-
-                                </div>
-                            </div>
-                            <div class="row form-group">
-                                <!--<div class="col col-md-3"><label for="product_files" class=" form-control-label">Şəkil</label></div>-->
-                                <div class="col-12 col-md-9"><input type="file" id="edit_product_files"  multiple="" class="form-control-file"></div>
-                            </div>
-                            <div class="row form-group">
-                                <p class="col pull-right" style="font-weight: 700;padding-right: 15px;">
-                                    <span style="display: inline-block;margin-right: 10px;">Seçilmiş</span>
-                                    <label class="switch switch-3d switch-danger mr-3"><input data-type='uncheck' type="checkbox" class="switch-input edit_product_priority"> <span class="switch-label"></span> <span class="switch-handle"></span></label>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Bağla</button>
-                            <button type="button" class="btn btn-primary btn-edit-ndu-product">Təsdiq et</button>
 
                         </div>
                     </div>
@@ -258,42 +217,53 @@
             $(function () {
 
                 $('#main-menu a i[data-type="gift"]').parents('li').addClass('active');
-//                Product.Proxy.getDictionariesByType(1, function (data) {
-//                    if (data) {
-//                        $('#product_type').html(Product.Service.parseDictionary(data));
-//                        $('#edit_product_type').html(Product.Service.parseDictionary(data));
-//                    }
-//                })
-//                Product.Proxy.getProductList('', function (data) {
-//                    if (data && data.data) {
-//                        var html = '';
-//                        $.each(data.data, function (i, v) {
-//                            html += '<tr>' +
-//                                    '<td>' + v.type.value[Product.lang] + '</th>' +
-//                                    '<td>' + v.name + '</td>' +
-//                                    '<td>' + v.count + '</td>' +
-//                                    '<td>' + v.price + '</td>' +
-//                                    '<td><i class="fa fa-remove remove-product" data-id="' + v.id + '"></i>' +
-//                                    '<i class="fa fa-edit edit-product" data-id = "' + v.id + '"></i></td>' +
-//                                    '</tr>'
-//                        })
-//                        $('#product_list tbody').html(html);
-                        $('#product_list').DataTable();
-//                    }
-//
-//                })
+                Product.Proxy.getDictionariesByType('12', function(data) {
+                    if(data) {
+                        var html = "";
+                        $.each(data, function(i, v){
+                            if(v.parentId == 0)
+                                html += '<option value = '+v.id+'>'+v.value.az+'</option>'
+                        })
+                        
+                        $('#categoryId').html(html);
+                        
+                    }
+                })
+                
+//                $('#startDate').fdatepicker({format: 'dd/mm/yyyy'})
+//                $('#endDate').fdatepicker({format: 'dd/mm/yyyy'})
+                var  form = {
+                    type:2
+                }
+                Product.Proxy.getProductList(form, function (data) {
+                    if (data && data.data) {
+                        var html = '';
+                            $.each(data.data, function (i, v) {
+//                                var descriptionLength = v.descriptionAz ? v.descriptionAz.length : 0;
+//                                var description = v.descriptionAz;
+//                                if(descriptionLength > 20) {
+//                                    description = v.descriptionAz.substring(0,20) + '...';
+//                                } 
+                                html += '<tr>' +
+                                        '<td>' + v.title.az + '</th>' +
+                                        '<td>' + (v.category.value.az) + '</td>' +
+                                        '<td>' + (v.price) + '</td>' +
+                                        '<td>' + (v.count) + '</td>' +
+//                                        '<td>' + description + '</td>' +
+                                        '<td><i class="fa fa-remove remove-product" data-id="' + v.id + '"></i>' +
+                                        '<i class="fa fa-edit edit-product" data-id = "' + v.id + '"></i></td>' +
+                                        '</tr>'
+                            })
+                            $('#product_list tbody').html(html);
+                            $('#product_list').DataTable();
+                    }
+
+                })
 
             })
 
         </script>
 
-
-        <!--    <script type="text/javascript">
-                $(document).ready(function() {
-                    
-                  
-                } );
-            </script>-->
 
 </body>
 </html>

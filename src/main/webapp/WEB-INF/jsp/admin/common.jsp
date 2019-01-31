@@ -200,6 +200,51 @@
                 </div>
             </div>
         </div> 
+            <div class="modal fade bs-example-modal-lg file_modal" tabicommon_selling_modalndex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        <h4 class="modal-title" id="myLargeModalLabel">Şəkil məlumatları</h4>
+                    </div>
+                    <div class="modal-body">
+                        
+                        
+                        <div class="row form-group">
+                          <div class="col col-md-3"><label for="product_name" class=" form-control-label">Başlıq(AZ)</label></div>
+                          <div class="col-12 col-md-9"><input type="text" id="titleAz" name="text-input" placeholder="" class="form-control"></div>
+                        </div>
+                        <div class="row form-group">
+                          <div class="col col-md-3"><label for="product_name" class=" form-control-label">Başlıq(EN)</label></div>
+                          <div class="col-12 col-md-9"><input type="text" id="titleEn" name="text-input" placeholder="" class="form-control"></div>
+                        </div>
+                        <div class="row form-group">
+                          <div class="col col-md-3"><label for="product_name" class=" form-control-label">Başlıq(RU)</label></div>
+                          <div class="col-12 col-md-9"><input type="text" id="titleRu" name="text-input" placeholder="" class="form-control"></div>
+                        </div>
+                        <div class="row form-group">
+                          <div class="col col-md-3"><label for="product_name" class=" form-control-label">Kontent(AZ)</label></div>
+                          <div class="col-12 col-md-9"><input type="text" id="descriptionAz" name="text-input" placeholder="" class="form-control"></div>
+                        </div>
+                        <div class="row form-group">
+                          <div class="col col-md-3"><label for="product_name" class=" form-control-label">Kontent(EN)</label></div>
+                          <div class="col-12 col-md-9"><input type="text" id="descriptionEn" name="text-input" placeholder="" class="form-control"></div>
+                        </div>
+                        <div class="row form-group">
+                          <div class="col col-md-3"><label for="product_name" class=" form-control-label">Kontent(RU)</label></div>
+                          <div class="col-12 col-md-9"><input type="text" id="descriptionRu" name="text-input" placeholder="" class="form-control"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Bağla</button>
+                        <button type="button" class="btn btn-primary btn-change-file-details">Təsdiq et</button>
+
+                    </div>
+                </div>
+            </div>
+        </div> 
             
     </div><!-- /#right-panel -->
     <%@include file="../include/admin_footer.jsp" %>
@@ -253,22 +298,40 @@
                 }
             })
             Product.Proxy.getOtherFiles(function (data) {
-                            if (data && data.data) {
+                if (data && data.data) {
 
-                                if (data.data && data.data.length > 0) {
-                                    var html = '';
-                                    $.each(data.data, function (i, v) {
-                                        html += '<div class="image-div">' +
-                                                '<img src="http://localhost:8080/Azcargo188/admin/image/' + v.path + '"  class="form-control-file product-image-view">' +
-                                                '<i class="fa fa-remove remove-image-btn" data-path="' + v.path + '"></i>' +
-                                                '</div>'
-                                    })
-                                }
-
-                                $('body .image-content-div').html(html);
-
-                            }
+                    if (data.data && data.data.length > 0) {
+                        var html = '';
+                        $.each(data.data, function (i, v) {
+                            html += '<div class="image-div" data-path = "'+ v.path +'" data-description-az="'+v.descriptionAz+'" data-description-en="'+v.descriptionEn+'" data-description-ru="'+v.descriptionRu+'" data-title-az="'+v.titleAz+'" data-title-en="'+v.titleAz+'" data-title-ru="'+v.titleRu+'" data-title-az="'+v.titleEn+'">' +
+                                    '<img src="'+Product.url+'/admin/image/' + v.path + '"  class="form-control-file product-image-view">' +
+                                    '<i class="fa fa-remove remove-image-btn" data-path="' + v.path + '"></i>' +
+                                    '</div>'
                         })
+                    }
+
+                    $('body .image-content-div').html(html);
+
+                }
+            });
+                        
+            $('body').on('dblclick', '.image-div', function() {
+                var titleAz = $(this).attr('data-title-az') !== 'null' ? $(this).attr('data-title-az') : '';
+                var titleEn = $(this).attr('data-title-en') !== 'null' ? $(this).attr('data-title-en') : '';
+                var titleRu = $(this).attr('data-title-ru') !== 'null' ? $(this).attr('data-title-ru') : '';
+                var descriptionAz = $(this).attr('data-description-az') !== 'null'  ? $(this).attr('data-description-az') : '';
+                var descriptionEn = $(this).attr('data-description-en') !== 'null' ? $(this).attr('data-description-en') : '';
+                var descriptionRu = $(this).attr('data-description-ru') !== 'null'  ? $(this).attr('data-description-ru') : '';
+                
+                $('#titleAz').val(titleAz);
+                $('#titleEn').val(titleEn);
+                $('#titleRu').val(titleRu);
+                $('#descriptionAz').val(descriptionAz);
+                $('#descriptionEn').val(descriptionEn);
+                $('#descriptionRu').val(descriptionRu);
+                
+                $('.file_modal').modal('show');
+            })
             
         })
         

@@ -514,41 +514,108 @@ public class AdminController extends SkeletonController {
                 return operationResponse;
             }
             
-            MultiValueMap<String, MultipartFile> requestParts = multipartHttpServletRequest.getMultiFileMap();
-            List<MultipartFile> files;
-            
-            files = requestParts.get("image");
-            
-            if (files.size() > 5) {
-                throw new Exception("invalid file count");
-            }
-            
-//            FileWrapperForm[] fileWrappers = new FileWrapperForm[files.size()];
-            Integer[] productImage = new Integer[files.size()];
-            FileWrapperFormValidator fileWrapperFormValidator = new FileWrapperFormValidator();
-            int i = 0;
-            
-            for (MultipartFile multipartFile : files) {
-                if (multipartFile != null && multipartFile.getSize() > 0) {
+            if(form.getId() == 0) {
+                MultiValueMap<String, MultipartFile> requestParts = multipartHttpServletRequest.getMultiFileMap();
+                List<MultipartFile> files;
 
-                    OperationResponse saveFileResponse = ftpService.saveFtpFile("", multipartFile, Crypto.getGuid());
-                        if(saveFileResponse.getCode() != ResultCode.OK) {
-                            throw new Exception("Error upload file");
-                        }
-                        
-                        String fullPath = (String) saveFileResponse.getData();
-                        FileWrapperForm fileWrapperForm = new FileWrapperForm();
-                        fileWrapperForm.setOriginalName(image.getOriginalFilename());
-                        fileWrapperForm.setPath(fullPath);
-                        operationResponse = service.addFile(fileWrapperForm);
-                        productImage[i] = (Integer) operationResponse.getData();
+                files = requestParts.get("image");
+
+                if (files.size() > 5) {
+                    throw new Exception("invalid file count");
                 }
-                i = i + 1;
+
+    //            FileWrapperForm[] fileWrappers = new FileWrapperForm[files.size()];
+                Integer[] productImage = new Integer[files.size() + form.getFileId().length];
+                int i = 0;
+                for(int id: form.getFileId()) {
+                    productImage[i] = id;
+                    ++i;
+                }
+
+                FileWrapperFormValidator fileWrapperFormValidator = new FileWrapperFormValidator();
+
+
+                for (MultipartFile multipartFile : files) {
+                    if (multipartFile != null && multipartFile.getSize() > 0) {
+
+                        OperationResponse saveFileResponse = ftpService.saveFtpFile("", multipartFile, Crypto.getGuid());
+                            if(saveFileResponse.getCode() != ResultCode.OK) {
+                                throw new Exception("Error upload file");
+                            }
+
+                            String fullPath = (String) saveFileResponse.getData();
+                            FileWrapperForm fileWrapperForm = new FileWrapperForm();
+                            fileWrapperForm.setOriginalName(image.getOriginalFilename());
+                            fileWrapperForm.setPath(fullPath);
+                            operationResponse = service.addFile(fileWrapperForm);
+                            productImage[i] = (Integer) operationResponse.getData();
+                    }
+                    i = i + 1;
+                }
+
+                form.setFileId(productImage);
             }
-            
-            form.setFileId(productImage);
             
             operationResponse = service.nduProduct(form,account.getId());
+        }
+        catch(Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        
+        return operationResponse;
+    }
+    
+    @ResponseBody
+    @PostMapping(value = "/product/file/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    protected OperationResponse addProductFile(@RequestPart(name = "image", required = false) MultipartFile image,
+                                                @RequestPart(name = "form", required = false) ProductForm form,
+                                                MultipartHttpServletRequest multipartHttpServletRequest
+    ) {
+        OperationResponse operationResponse = new OperationResponse(ResultCode.ERROR);
+        try {
+            Account account = getSessionAccount(operationResponse);
+            if(!account.getUserType().equals("ADMIN")) {
+                operationResponse.setCode(ResultCode.UNAUTHORIZED);
+                return operationResponse;
+            }
+            
+            MultiValueMap<String, MultipartFile> requestParts = multipartHttpServletRequest.getMultiFileMap();
+            List<MultipartFile> files;
+
+            files = requestParts.get("image");
+
+            if (files.size() > 5 || files.size() == 0) {
+                throw new Exception("invalid file count");
+            }
+
+//            FileWrapperForm[] fileWrappers = new FileWrapperForm[files.size()];
+            Integer[] productImage = new Integer[files.size()];
+            int i = 0;
+
+            FileWrapperFormValidator fileWrapperFormValidator = new FileWrapperFormValidator();
+
+
+                for (MultipartFile multipartFile : files) {
+                    if (multipartFile != null && multipartFile.getSize() > 0) {
+
+                        OperationResponse saveFileResponse = ftpService.saveFtpFile("", multipartFile, Crypto.getGuid());
+                            if(saveFileResponse.getCode() != ResultCode.OK) {
+                                throw new Exception("Error upload file");
+                            }
+
+                            String fullPath = (String) saveFileResponse.getData();
+                            FileWrapperForm fileWrapperForm = new FileWrapperForm();
+                            fileWrapperForm.setOriginalName(image.getOriginalFilename());
+                            fileWrapperForm.setPath(fullPath);
+                            operationResponse = service.addFile(fileWrapperForm);
+                            productImage[i] = (Integer) operationResponse.getData();
+                    }
+                    i = i + 1;
+                }
+
+                form.setFileId(productImage);
+            
+            operationResponse = service.addProductFile(form);
         }
         catch(Exception e) {
             log.error(e.getMessage(), e);
@@ -677,6 +744,30 @@ public class AdminController extends SkeletonController {
         return operationResponse;
     }
     
+    @ApiOperation(value = "image nin path ne gore silir", notes = "istifade ucun sessiya teleb olunur, login olmaq lazimdir.")
+    @PostMapping(value = "/file/{path}/change/details")
+    @ResponseBody
+    protected OperationResponse changeFileDetails(@PathVariable String path,
+                                                   FileWrapperForm form) {
+        OperationResponse operationResponse = new OperationResponse(ResultCode.ERROR);
+
+        try {
+            Account account = getSessionAccount(operationResponse);
+            
+            if(!account.getUserType().equals("ADMIN")) {
+                operationResponse.setCode(ResultCode.UNAUTHORIZED);
+                throw new Exception("invalid User Type");
+            }
+            form.setPath(path);
+            operationResponse = service.changeFileDetails(form);
+            
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+
+        return operationResponse;
+    }
+    
     @ApiOperation(value = "Productlarin siyahisini getirir", notes = "Filterler: typeId, companyId, name, priority, startPrice, endPrice. Default olaraq page=1 ve pageCount=50 goturulub")
     @GetMapping(value = "/products")
     @ResponseBody
@@ -699,7 +790,7 @@ public class AdminController extends SkeletonController {
     @GetMapping(value = "/product/{id:\\d+}/files")
     @ResponseBody
     protected OperationResponse getProductFileList(@PathVariable int id,
-                                                   @RequestParam(defaultValue = "1") String type) {
+                                                   @RequestParam(defaultValue = "") String type) {
         OperationResponse operationResponse = new OperationResponse(ResultCode.ERROR);
 
         try {

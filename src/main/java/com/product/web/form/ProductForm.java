@@ -28,5 +28,6 @@ public class ProductForm {
     private int page = 1;
     private int pageCount = 50;
     private int type;
+    private int favorite;
     
 }

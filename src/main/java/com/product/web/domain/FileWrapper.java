@@ -15,6 +15,12 @@ public class FileWrapper {
     private String fullPath;
     private String name;
     private String type;
+    private String titleAz;
+    private String titleEn;
+    private String titleRu;
+    private String descriptionAz;
+    private String descriptionEn;
+    private String descriptionRu;
     private byte[] file;
 
     public FileWrapper() {
@@ -24,6 +30,19 @@ public class FileWrapper {
         this.id = id;
     }
 
+    public FileWrapper(String path, String fullPath, String name, String titleAz, String titleEn, String titleRu, String descriptionAz, String descriptionEn, String descriptionRu) {
+        this.path = path;
+        this.fullPath = fullPath;
+        this.name = name;
+        this.titleAz = titleAz;
+        this.titleEn = titleEn;
+        this.titleRu = titleRu;
+        this.descriptionAz = descriptionAz;
+        this.descriptionEn = descriptionEn;
+        this.descriptionRu = descriptionRu;
+    }
+
+    
     
     public FileWrapper(int id, String path, String name, String type, byte[] file) {
         this.id = id;
@@ -33,7 +52,8 @@ public class FileWrapper {
         this.file = file;
     }
 
-    public FileWrapper(String path, String fullPath, String name, String type) {
+    public FileWrapper(int id, String path, String fullPath, String name, String type) {
+        this.id = id;
         this.path = path;
         this.fullPath = fullPath;
         this.path = path;
@@ -88,5 +108,55 @@ public class FileWrapper {
     public void setFile(byte[] file) {
         this.file = file;
     }
+
+    public String getTitleAz() {
+        return titleAz;
+    }
+
+    public void setTitleAz(String titleAz) {
+        this.titleAz = titleAz;
+    }
+
+    public String getTitleEn() {
+        return titleEn;
+    }
+
+    public void setTitleEn(String titleEn) {
+        this.titleEn = titleEn;
+    }
+
+    public String getTitleRu() {
+        return titleRu;
+    }
+
+    public void setTitleRu(String titleRu) {
+        this.titleRu = titleRu;
+    }
+
+    public String getDescriptionAz() {
+        return descriptionAz;
+    }
+
+    public void setDescriptionAz(String descriptionAz) {
+        this.descriptionAz = descriptionAz;
+    }
+
+    public String getDescriptionEn() {
+        return descriptionEn;
+    }
+
+    public void setDescriptionEn(String descriptionEn) {
+        this.descriptionEn = descriptionEn;
+    }
+
+    public String getDescriptionRu() {
+        return descriptionRu;
+    }
+
+    public void setDescriptionRu(String descriptionRu) {
+        this.descriptionRu = descriptionRu;
+    }
+    
+    
     
 }

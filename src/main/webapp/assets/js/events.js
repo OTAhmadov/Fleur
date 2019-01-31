@@ -6,10 +6,21 @@
 
 $(function (e) {
     try {
-        $('body').on('change', '#edit_product_files', function () {
+        $('body').on('change', '#product_files', function () {
+            
+            
+            var type = $('body .btn-ndu-product').attr('data-type')
+            
+            if(type !== 'edit')  {
+                return;
+            }
             var files = $(this)[0].files;
             var length = files.length;
-            var productId = $(this).attr('data-id');
+            if(length ==0 )  {
+                return;
+            }
+            var id = $('body .btn-ndu-product').attr('data-id')
+            var typeId = $('body .add-product').attr('data-type-id')
             var inFor = 0;
             var obj = $(this);
 
@@ -31,24 +42,30 @@ $(function (e) {
                 }
 
             }
-
+            var form = {
+                id:id,
+                type:typeId
+            }
+            formData.append('form', new Blob([JSON.stringify(form)], {
+                type: "application/json"
+            }))
             if (inFor == 0) {
-                Product.Proxy.addProductFiles(productId, formData, function (result) {
+                Product.Proxy.addProductFiles(formData, function (result) {
                     if (result) {
                         obj.val('');
-                        Product.Proxy.getProductDetails(productId, function (data) {
+                        Product.Proxy.getProductDetails(id, typeId, function (data) {
                             if (data && data.data) {
 
                                 if (data.data.images && data.data.images.length > 0) {
                                     var html = '';
                                     $.each(data.data.images, function (i, v) {
                                         html += '<div class="image-div">' +
-                                                '<img src="'+Product.url+'/admin/image/' + v.path + '"  class="form-control-file product-image-view">' +
-                                                '<i class="fa fa-remove remove-image-btn" data-path="' + v.path + '"></i>' +
+                                                '<img src="'+Product.url+'/admin/image/' + v.path + '"  class="form-control-file product-image-view" data-id = "'+v.id+'">' +
+                                                '<i class="fa fa-remove remove-image-btn" data-path="' + v.path + '" data-type="product"></i>' +
                                                 '</div>'
                                     })
                                 }
-
+                                $('.active-file-div').removeClass('hidden');
                                 $('body .image-content-div').html(html);
 
                             }
@@ -57,6 +74,7 @@ $(function (e) {
                 })
             }
         })
+        
         $('body').on('change', '#add_common_files', function () {
             var files = $(this)[0].files;
             var length = files.length;
@@ -92,7 +110,7 @@ $(function (e) {
                                 if (data.data && data.data.length > 0) {
                                     var html = '';
                                     $.each(data.data, function (i, v) {
-                                        html += '<div class="image-div">' +
+                                        html += '<div class="image-div" data-path = "'+ v.path +'"  data-description-az="'+v.descriptionAz+'" data-description-en="'+v.descriptionEn+'" data-description-ru="'+v.descriptionRu+'" data-title-az="'+v.titleAz+'" data-title-en="'+v.titleAz+'" data-title-ru="'+v.titleRu+'" data-title-az="'+v.titleEn+'">' +
                                                 '<img src="'+Product.url+'/admin/image/' + v.path + '"  class="form-control-file product-image-view">' +
                                                 '<i class="fa fa-remove remove-image-btn" data-path="' + v.path + '"></i>' +
                                                 '</div>'
@@ -116,13 +134,13 @@ $(function (e) {
             $('body .btn-ndu-service').attr('data-type', 'add');
         })
 
-        $('body').on('click', '.add-achievement', function () {
+        $('body').on('click', '.add-event', function () {
             
             $('body .active-file-div').addClass('hidden');
-            $('body #achievement-form')[0].reset();
+            $('body #event-form')[0].reset();
             $('body .active-file-type').removeClass('hidden');
-            $('body .achievement_modal').modal('show');
-            $('body .btn-ndu-achievement').attr('data-type', 'add');
+            $('body .event_modal').modal('show');
+            $('body .btn-ndu-event').attr('data-type', 'add');
         })
 
         $('body').on('click', '.add-promotation', function () {
@@ -134,91 +152,113 @@ $(function (e) {
             $('body .btn-ndu-promotation').attr('data-type', 'add');
         })
 
-        $('body').on('click', '.add-career', function () {
+        $('body').on('click', '.add-product', function () {
             
-            $('body .career_status').attr('data-type', 'check');
-            $('body .career_status').attr('checked', true);
-            $('body .career_status').val(47);
+            $('body .career_status').attr('data-type', 'uncheck');
+            $('body .career_status').attr('checked', false);
+            $('body .career_status').val(48);
             $('body .active-file-div').addClass('hidden');
-            $('body #career-form')[0].reset();
+            $('body #product-form')[0].reset();
             $('body .active-file-type').removeClass('hidden');
-            $('body .career_modal').modal('show');
-            $('body .btn-ndu-career').attr('data-type', 'add');
+            $('body .product_modal').modal('show');
+            $('body .btn-ndu-product').attr('data-type', 'add');
+            $('body .btn-ndu-product').attr('data-type-id', $(this).attr('data-type-id'));
         })
         
         
 
-        $('body').on('click', '.btn-ndu-service', function () {
+        $('body').on('click', '.btn-ndu-product', function () {
             var form = new FormData();
             var type = $(this).attr('data-type');
             var id = $(this).attr('data-id');
-            var typeId = $('body .sub_service_type').val();
+            var categoryId = $('body #categoryId').val();
+            var typeId = $('.add-product').attr('data-type-id');
             var titleAz = $('body #titleAz').val();
             var titleEn = $('body #titleEn').val();
             var titleRu = $('body #titleRu').val();
             var descriptionAz = $('body #descriptionAz').val();
             var descriptionEn = $('body #descriptionEn').val();
             var descriptionRu = $('body #descriptionRu').val();
-            var fileId = $('body #product_files').attr('data-id');
+            var price = $('body #price').val();
+            var sale = $('body #sale').val();
+            var count = $('body #count').val();
             
-            var files = $('body #product_files')[0].files;
-            var length = files.length;
-            var inFor = 0;
-            if (length > 5) {
-                alert('Şəkillərin sayı 5 - dən çox ola bilməz')
-                return false;
-            }
-            for (var i = 0; i < length; i++) {
-                if (inFor == 0) {
-                    if (Product.Validation.checkFile(files[i].type, fileTypes.IMAGE_CONTENT_TYPE)) {
-                        form.append("image", files[i]);
-
-                    } else {
-                        alert('Faylın tipi səhv seçilib');
-                        inFor = 1;
-                    }
+            if(type == 'add') {
+                var files = $('body #product_files')[0].files;
+                var length = files.length;
+                var inFor = 0;
+                if (length > 5) {
+                    alert('Şəkillərin sayı 5 - dən çox ola bilməz')
+                    return false;
                 }
+                for (var i = 0; i < length; i++) {
+                    if (inFor == 0) {
+                        if (Product.Validation.checkFile(files[i].type, fileTypes.IMAGE_CONTENT_TYPE)) {
+                            form.append("image", files[i]);
 
+                        } else {
+                            alert('Faylın tipi səhv seçilib');
+                            inFor = 1;
+                        }
+                    }
+
+                } 
             }
             
             var service = {
                 id: id ? id : 0,
-                typeId: typeId,
+                categoryId: categoryId,
+                type: typeId,
+                price: price,
+                sale: sale,
+                count: count,
                 titleAz: titleAz,
                 titleEn: titleEn,
                 titleRu: titleRu,
                 descriptionAz: descriptionAz,
                 descriptionEn: descriptionEn,
                 descriptionRu: descriptionRu,
-                fileId: fileId ? fileId : 0
+                fileId: [],
+                favorite: $('body .career_status').val()
+            }
+            
+            if(type == 'edit') {
+                $('body .product-image-view').each(function() {
+                    service.fileId.push($(this).attr('data-id'));
+                })
             }
             
             form.append('form', new Blob([JSON.stringify(service)], {
                 type: "application/json"
             }))
 
-            Product.Proxy.nduService(form, function (data) {
+            Product.Proxy.nduProduct(form, function (data) {
                 if (data) {
-                    Product.Proxy.getServiceList('', function (data) {
+                    var form = {
+                        type:typeId
+                    }
+                    Product.Proxy.getProductList(form, function (data) {
                         if (data && data.data) {
-                            var html = '';
+                        var html = '';
                             $.each(data.data, function (i, v) {
-                                var descriptionLength = v.descriptionAz.length;
-                                var description = v.descriptionAz;
-                                if(descriptionLength > 60) {
-                                    description = v.descriptionAz.substring(0,60) + '...';
-                                } 
+//                                var descriptionLength = v.descriptionAz ? v.descriptionAz.length : 0;
+//                                var description = v.descriptionAz;
+//                                if(descriptionLength > 20) {
+//                                    description = v.descriptionAz.substring(0,20) + '...';
+//                                } 
                                 html += '<tr>' +
-                                        '<td>' + v.typeId.value.az + '</th>' +
-                                        '<td>' + v.titleAz + '</td>' +
-                                        '<td>' + description + '</td>' +
-                                        '<td><i class="fa fa-remove remove-service" data-id="' + v.id + '"></i>' +
-                                        '<i class="fa fa-edit edit-service" data-id = "' + v.id + '"></i></td>' +
+                                        '<td>' + v.title.az + '</th>' +
+                                        '<td>' + (v.category.value.az) + '</td>' +
+                                        '<td>' + (v.price) + '</td>' +
+                                        '<td>' + (v.count) + '</td>' +
+//                                        '<td>' + description + '</td>' +
+                                        '<td><i class="fa fa-remove remove-product" data-id="' + v.id + '"></i>' +
+                                        '<i class="fa fa-edit edit-product" data-id = "' + v.id + '"></i></td>' +
                                         '</tr>'
                             })
-                            $('#service_list tbody').html(html);
-                            $('#service_list').DataTable();
-                            $('body .service_modal').modal('hide');
+                            $('#product_list tbody').html(html);
+                            $('#product_list').DataTable();
+                            $('body .product_modal').modal('hide');
                         }
 
                     })
@@ -226,14 +266,16 @@ $(function (e) {
             })
 //        $('body .product_modal').modal('show');
         })
-        $('body').on('click', '.btn-ndu-achievement', function () {
+        
+        $('body').on('click', '.btn-ndu-event', function () {
             var form = new FormData();
             var type = $(this).attr('data-type');
             var id = $(this).attr('data-id');
             var titleAz = $('body #titleAz').val();
             var titleEn = $('body #titleEn').val();
             var titleRu = $('body #titleRu').val();
-            var achievementDate = $('body #achievementDate').val();
+            var startDate = $('body #startDate').val();
+            var endDate = $('body #endDate').val();
             var descriptionAz = $('body #descriptionAz').val();
             var descriptionEn = $('body #descriptionEn').val();
             var descriptionRu = $('body #descriptionRu').val();
@@ -261,7 +303,8 @@ $(function (e) {
             
             var achievement = {
                 id: id ? id : 0,
-                createDate: achievementDate,
+                startDate: startDate,
+                endDate: endDate,
                 titleAz: titleAz,
                 titleEn: titleEn,
                 titleRu: titleRu,
@@ -275,9 +318,9 @@ $(function (e) {
                 type: "application/json"
             }))
 
-            Product.Proxy.nduAchievement(form, function (data) {
+            Product.Proxy.nduEvent(form, function (data) {
                 if (data) {
-                    Product.Proxy.getAchievementList('', function (data) {
+                    Product.Proxy.getEventList('', function (data) {
                         if (data && data.data) {
                             var html = '';
                             $.each(data.data, function (i, v) {
@@ -287,16 +330,16 @@ $(function (e) {
                                     description = v.descriptionAz.substring(0,60) + '...';
                                 } 
                                 html += '<tr>' +
-                                        '<td>' + v.achievementDate + '</th>' +
+                                        '<td>' + (v.startDate+' - '+ v.endDate) + '</th>' +
                                         '<td>' + v.titleAz + '</td>' +
                                         '<td>' + description + '</td>' +
-                                        '<td><i class="fa fa-remove remove-achievement" data-id="' + v.id + '"></i>' +
-                                        '<i class="fa fa-edit edit-achievement" data-id = "' + v.id + '"></i></td>' +
+                                        '<td><i class="fa fa-remove remove-event" data-id="' + v.id + '"></i>' +
+                                        '<i class="fa fa-edit edit-event" data-id = "' + v.id + '"></i></td>' +
                                         '</tr>'
                             })
-                            $('#achievement_list tbody').html(html);
-                            $('#achievement_list').DataTable();
-                            $('body .achievement_modal').modal('hide');
+                            $('#event_list tbody').html(html);
+                            $('#event_list').DataTable();
+                            $('body .event_modal').modal('hide');
                         }
 
                     })
@@ -314,6 +357,7 @@ $(function (e) {
             var startDate = $('body #startDate').val();
             var endDate = $('body #endDate').val();
             var descriptionAz = $('body #descriptionAz').val();
+            var sale = $('body #sale').val();
             var descriptionEn = $('body #descriptionEn').val();
             var descriptionRu = $('body #descriptionRu').val();
             var fileId = $('body #product_files').attr('data-id');
@@ -348,6 +392,7 @@ $(function (e) {
                 descriptionAz: descriptionAz,
                 descriptionEn: descriptionEn,
                 descriptionRu: descriptionRu,
+                sale: sale,
                 fileId: fileId ? fileId : 0
             }
             
@@ -474,37 +519,28 @@ $(function (e) {
 //        $('body .product_modal').modal('show');
         })
 
-        $('body').on('click', '.edit-service', function () {
+        $('body').on('click', '.edit-product', function () {
 
             var id = $(this).attr('data-id');
             var type = $(this).attr('data-type');
-            $('body .btn-ndu-service').attr('data-type', 'edit');
-            $('body .btn-ndu-service').attr('data-id', id);
-            Product.Proxy.getServiceDetails(id, function (data) {
+            var typeId = $('body .add-product').attr('data-type-id');
+            $('body .btn-ndu-product').attr('data-type', 'edit');
+            $('body .btn-ndu-product').attr('data-id', id);
+            Product.Proxy.getProductDetails(id, typeId, function (data) {
                 if (data && data.data) {
-                    $('body .super_service_type').val(data.data.typeId.parentId);
-                    
-                    Product.Proxy.getDictionariesByParent(data.data.typeId.parentId, function(data2) {
-                        if(data2) {
-                            var html = "";
-                            $.each(data2, function(i, v){
-                                    html += '<option value = '+v.id+'>'+v.value.az+'</option>'
-                            })
-
-                            $('.sub_service_type').html(html);
-                             $('body .sub_service_type').val(data.data.typeId.id);
-                        }
-                    })
-                    
+                    $('body .super_service_type').val(data.data.category.id);
                    
-                    $('body #titleAz').val(data.data.titleAz);
-                    $('body #titleEn').val(data.data.titleEn);
-                    $('body #titleRu').val(data.data.titleRu);
-                    $('body #descriptionAz').val(data.data.descriptionAz);
-                    $('body #descriptionEn').val(data.data.descriptionEn);
-                    $('body #descriptionRu').val(data.data.descriptionRu);
-                    $('body #product_files').attr('data-id', data.data.fileId);
-
+                    $('body #titleAz').val(data.data.title.az);
+                    $('body #titleEn').val(data.data.title.en);
+                    $('body #titleRu').val(data.data.title.ru);
+                    $('body #descriptionAz').val(data.data.description.az);
+                    $('body #descriptionEn').val(data.data.description.en);
+                    $('body #descriptionRu').val(data.data.description.ru);
+                    $('body #sale').val(data.data.sale);
+                    $('body #price').val(data.data.price);
+                    $('body #count').val(data.data.count);
+//                    $('body #product_files').attr('data-id', data.data.fileId);
+                   
 //                    if (data.data.priority == 1) {
 //                        $('body .edit_product_priority').attr('data-type', 'check');
 //                        $('body .edit_product_priority').attr('checked', 'true');
@@ -513,33 +549,38 @@ $(function (e) {
 //                        $('body .edit_product_priority').remmoveAttr('checked');
 //                    }
 
-                    if (data.data.fileId && data.data.fileId > 0) {
+                    if (data.data.images && data.data.images.length > 0) {
                         $('body .active-file-div').removeClass('hidden');
-                        $('body .active-file-type').addClass('hidden');
-                        var html =  '<div class="image-div">' +
-                                    '<img src="'+Product.url+'/admin/image/' + data.data.filePath + '"  class="form-control-file product-image-view">' +
-                                    '<i class="fa fa-remove remove-image-btn" data-path="' + data.data.filePath + '"></i>' +
-                                    '</div>'
+//                        $('body .active-file-type').addClass('hidden');
+                        var html = "";
+                        $.each(data.data.images, function(i, v) {
+                            html += '<div class="image-div" data-id = "'+v.id+'">' +
+                                    '<img src="'+Product.url+'/admin/image/' + v.path + '"  class="form-control-file product-image-view" data-id = "'+v.id+'">' +
+                                    '<i class="fa fa-remove remove-image-btn" data-path="' + v.path + '" data-type="product"></i>' +
+                                    '</div>';
+                        })
+                        $('body .image-content-div').html(html);
                     }
 
-                    $('body .image-content-div').html(html);
+                    $('body .product_modal').modal('show');
 
                 }
             })
 
-            $('body .service_modal').modal('show');
+            
         })
 
-        $('body').on('click', '.edit-achievement', function () {
+        $('body').on('click', '.edit-event', function () {
 
             var id = $(this).attr('data-id');
             var type = $(this).attr('data-type');
-            $('body .btn-ndu-achievement').attr('data-type', 'edit');
-            $('body .btn-ndu-achievement').attr('data-id', id);
-            Product.Proxy.getAchievementDetails(id, function (data) {
+            $('body .btn-ndu-event').attr('data-type', 'edit');
+            $('body .btn-ndu-event').attr('data-id', id);
+            Product.Proxy.getEventDetails(id, function (data) {
                 if (data && data.data) {
                     $('body #titleAz').val(data.data.titleAz);
-                    $('body #achievementDate').val(data.data.achievementDate);
+                    $('body #startDate').val(data.data.startDate);
+                    $('body #endDate').val(data.data.endDate);
                     $('body #titleEn').val(data.data.titleEn);
                     $('body #titleRu').val(data.data.titleRu);
                     $('body #descriptionAz').val(data.data.descriptionAz);
@@ -561,7 +602,7 @@ $(function (e) {
                 }
             })
 
-            $('body .achievement_modal').modal('show');
+            $('body .event_modal').modal('show');
         })
 
         $('body').on('click', '.edit-promotation', function () {
@@ -577,6 +618,7 @@ $(function (e) {
                     $('body #endDate').val(data.data.endDate);
                     $('body #titleEn').val(data.data.titleEn);
                     $('body #titleRu').val(data.data.titleRu);
+                    $('body #sale').val(data.data.sale);
                     $('body #descriptionAz').val(data.data.descriptionAz);
                     $('body #descriptionEn').val(data.data.descriptionEn);
                     $('body #descriptionRu').val(data.data.descriptionRu);
@@ -610,8 +652,8 @@ $(function (e) {
             Product.Proxy.getCareerDetails(id, function (data) {
                 if (data && data.data) {
                     $('body #titleAz').val(data.data.titleAz);
-                    $('body #startDate').val(data.data.startDate);
-                    $('body #endDate').val(data.data.endDate);
+                    $('body #price').val(data.data.price);
+                    $('body #sale').val(data.data.sale);
                     $('body #startSalary').val(data.data.startSalary);
                     $('body #endSalary').val(data.data.endSalary);
                     $('body #titleEn').val(data.data.titleEn);
@@ -736,47 +778,55 @@ $(function (e) {
             $('body .common_apply_modal').modal('show');
         })
 
-        $('body').on('click', '.remove-service', function () {
+        $('body').on('click', '.remove-product', function () {
             var id = $(this).attr('data-id');
+            var typeId = $('.add-product').attr('data-type-id');
             var form = new FormData();
             var product = {
-                id: id * (-1)
+                id: id * (-1),
+                type:typeId
             }
             form.append('form', new Blob([JSON.stringify(product)], {
                 type: "application/json"
             }))
             if (confirm('Silmək istədiyinizə əminsiniz?')) {
-                Product.Proxy.nduService(form, function (data) {
+                Product.Proxy.nduProduct(form, function (data) {
                     if (data) {
-                        Product.Proxy.getServiceList('', function (data) {
+                        var form = {
+                            type:typeId
+                        }
+                        Product.Proxy.getProductList(form, function (data) {
                             if (data && data.data) {
-                                var html = '';
+                            var html = '';
                                 $.each(data.data, function (i, v) {
-                                    var descriptionLength = v.descriptionAz.length;
-                                    var description = v.descriptionAz;
-                                    if(descriptionLength > 60) {
-                                        description = v.descriptionAz.substring(0,60) + '...';
-                                    } 
+    //                                var descriptionLength = v.descriptionAz ? v.descriptionAz.length : 0;
+    //                                var description = v.descriptionAz;
+    //                                if(descriptionLength > 20) {
+    //                                    description = v.descriptionAz.substring(0,20) + '...';
+    //                                } 
                                     html += '<tr>' +
-                                            '<td>' + v.typeId.value.az + '</th>' +
-                                            '<td>' + v.titleAz + '</td>' +
-                                            '<td>' + description + '</td>' +
-                                            '<td><i class="fa fa-remove remove-service" data-id="' + v.id + '"></i>' +
-                                            '<i class="fa fa-edit edit-service" data-id = "' + v.id + '"></i></td>' +
+                                            '<td>' + v.title.az + '</th>' +
+                                            '<td>' + (v.category.value.az) + '</td>' +
+                                            '<td>' + (v.price) + '</td>' +
+                                            '<td>' + (v.count) + '</td>' +
+    //                                        '<td>' + description + '</td>' +
+                                            '<td><i class="fa fa-remove remove-product" data-id="' + v.id + '"></i>' +
+                                            '<i class="fa fa-edit edit-product" data-id = "' + v.id + '"></i></td>' +
                                             '</tr>'
                                 })
-                                $('#service_list tbody').html(html);
-                                $('#service_list').DataTable();
+                                $('body #product_list tbody').html(html);
+                                $('body #product_list').DataTable();
                             }
-
+                            
                         })
+                        
                     }
                 })
             }
 
         })
 
-        $('body').on('click', '.remove-achievement', function () {
+        $('body').on('click', '.remove-event', function () {
             var id = $(this).attr('data-id');
             var form = new FormData();
             var product = {
@@ -786,9 +836,9 @@ $(function (e) {
                 type: "application/json"
             }))
             if (confirm('Silmək istədiyinizə əminsiniz?')) {
-                Product.Proxy.nduAchievement(form, function (data) {
+                Product.Proxy.nduEvent(form, function (data) {
                     if (data) {
-                        Product.Proxy.getAchievementList('', function (data) {
+                        Product.Proxy.getEventList('', function (data) {
                             if (data && data.data) {
                                 var html = '';
                                 $.each(data.data, function (i, v) {
@@ -798,16 +848,15 @@ $(function (e) {
                                         description = v.descriptionAz.substring(0,60) + '...';
                                     } 
                                     html += '<tr>' +
-                                            '<td>' + v.achievementDate + '</th>' +
+                                            '<td>' + (v.startDate+' - '+ v.endDate) + '</th>' +
                                             '<td>' + v.titleAz + '</td>' +
                                             '<td>' + description + '</td>' +
-                                            '<td><i class="fa fa-remove remove-achievement" data-id="' + v.id + '"></i>' +
-                                            '<i class="fa fa-edit edit-achievement" data-id = "' + v.id + '"></i></td>' +
+                                            '<td><i class="fa fa-remove remove-event" data-id="' + v.id + '"></i>' +
+                                            '<i class="fa fa-edit edit-event" data-id = "' + v.id + '"></i></td>' +
                                             '</tr>'
                                 })
-                                $('#achievement_list tbody').html(html);
-                                $('#achievement_list').DataTable();
-                                $('body .service_modal').modal('hide');
+                                $('#event_list tbody').html(html);
+                                $('#event_list').DataTable();
                             }
 
                         })
@@ -902,14 +951,17 @@ $(function (e) {
 
         })
 
-        $('body').on('click', '.remove-image-btn', function () {
+        $('body').on('click', '.remove-image-btn', function (e) {
+            e.preventDefault();
             var path = $(this).attr('data-path');
             var obj = $(this)
             Product.Proxy.removeProductImage(path, function (data) {
                 if (data) {
                     obj.parents('.image-div').remove();
-                    $('body .active-file-div').addClass('hidden');
-                    $('body .active-file-type').removeClass('hidden');
+                    if(obj.attr('data-type') !=='product') {
+                        $('body .active-file-div').addClass('hidden');
+                        $('body .active-file-type').removeClass('hidden');
+                    }
                     $('body .active-file-type').find('input[type="file"]').val('');
                 }
             })
@@ -1336,5 +1388,39 @@ $(function (e) {
             //'unchecked' event code
     })
 
+    $('body').on('click', '.btn-change-file-details', function() {
+        var path = $('.image-div').attr('data-path');
+        var form = {
+            titleAz: $('body #titleAz').val(),
+            titleEn: $('body #titleEn').val(),
+            titleRu: $('body #titleRu').val(),
+            descriptionAz: $('body #descriptionAz').val(),
+            descriptionEn: $('body #descriptionEn').val(),
+            descriptionRu: $('body #descriptionRu').val()
+        }
+        Product.Proxy.changeFileDetails(path, form, function(data) {
+            if(data) {
+                Product.Proxy.getOtherFiles(function (data) {
+                    if (data && data.data) {
 
+                        if (data.data && data.data.length > 0) {
+                            var html = '';
+                            $.each(data.data, function (i, v) {
+                                html += '<div class="image-div" data-path = "'+ v.path +'" data-description-az="'+v.descriptionAz+'" data-description-en="'+v.descriptionEn+'" data-description-ru="'+v.descriptionRu+'" data-title-az="'+v.titleAz+'" data-title-en="'+v.titleAz+'" data-title-ru="'+v.titleRu+'" data-title-az="'+v.titleEn+'">' +
+                                        '<img src="'+Product.url+'/admin/image/' + v.path + '"  class="form-control-file product-image-view">' +
+                                        '<i class="fa fa-remove remove-image-btn" data-path="' + v.path + '"></i>' +
+                                        '</div>'
+                            })
+                        }
+
+                        $('body .image-content-div').html(html);
+                        $('body .file_modal').modal('hide');
+
+                    }
+                });
+                
+            }
+        });
+        
+    })
 });

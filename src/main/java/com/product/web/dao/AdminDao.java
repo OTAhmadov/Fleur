@@ -35,6 +35,7 @@ import com.product.web.form.PromotationForm;
 import com.product.web.form.RoleForm;
 import com.product.web.form.WishlistForm;
 import com.product.web.util.Crypto;
+import com.sun.tracing.Probe;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -408,7 +409,7 @@ public class AdminDao implements IAdminDao {
             
             try(ResultSet resultSet = preparedStatement.executeQuery()) {
                 if(resultSet.next()) {
-                    return new FileWrapper(resultSet.getString("path"), resultSet.getString("path"), resultSet.getString("original_name"), resultSet.getString("file_type"));
+                    return new FileWrapper(resultSet.getInt("id"), resultSet.getString("path"), resultSet.getString("path"), resultSet.getString("original_name"), resultSet.getString("file_type"));
                 }
             }
         } 
@@ -419,18 +420,31 @@ public class AdminDao implements IAdminDao {
     }
 
     @Override
-    public OperationResponse addProductFile(Account account, int productId, FileWrapperForm form) {
+    public OperationResponse addProductFile(ProductForm form) {
         OperationResponse operationResponse = new OperationResponse(ResultCode.ERROR);
         
-        try(Connection connection = dbConnect.getPostgresConnection();
-            CallableStatement callableStatement = connection.prepareCall("{call add_product_files(?,?,?,?,?)}")) {
-            callableStatement.setInt(1, account.getId());
-            callableStatement.setInt(2, productId);
-            callableStatement.setString(3, form.getPath());
-            callableStatement.setString(4, form.getOriginalName());
-            callableStatement.setString(5, form.getContentType());
+        try {
+            for(int i: form.getFileId()) {
+                operationResponse = addProductFileOneByOne(form.getId(), i, form.getType());
+            }
             
-            callableStatement.executeUpdate();
+        } 
+        catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return operationResponse;
+    }
+
+    public OperationResponse addProductFileOneByOne(int productId, int fileId, int type) {
+        OperationResponse operationResponse = new OperationResponse(ResultCode.ERROR);
+        String query = "";
+        if(type == 1) query = "insert into flower_images(flower_id, file_id) values(?, ?)";
+        else if(type == 2) query = "insert into gift_images(gift_id, file_id) values(?, ?)";
+        try(Connection connection = dbConnect.getPostgresConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, productId);
+            preparedStatement.setInt(2, fileId);
+            preparedStatement.executeUpdate();
             operationResponse.setCode(ResultCode.OK);
         } 
         catch (Exception e) {
@@ -468,7 +482,13 @@ public class AdminDao implements IAdminDao {
             ResultSet resultSet = preparedStatement.executeQuery()) {
             while(resultSet.next()) {
                 String path = resultSet.getString("path").split("\\.")[0];
-                    list.add(new FileWrapper(path, resultSet.getString("path"), resultSet.getString("original_name"), resultSet.getString("file_type")));
+                    list.add(new FileWrapper(path, resultSet.getString("path"), resultSet.getString("original_name"),
+                                                resultSet.getString("title_az"),
+                                                resultSet.getString("title_en"),
+                                                resultSet.getString("title_ru"),
+                                                resultSet.getString("description_az"),
+                                                resultSet.getString("description_az"),
+                                                resultSet.getString("description_az")));
              
             }
         } 
@@ -486,6 +506,37 @@ public class AdminDao implements IAdminDao {
             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, accountId);
             preparedStatement.setString(2, path);
+            preparedStatement.executeUpdate();
+            
+            operationResponse.setCode(ResultCode.OK);
+            
+        } 
+        catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return operationResponse;
+    }
+
+    @Override
+    public OperationResponse changeFileDetails(FileWrapperForm form) {
+        OperationResponse operationResponse = new OperationResponse(ResultCode.ERROR);
+        String query = "update files set "
+                        + "title_az = ?, "
+                        + "title_en = ?, "
+                        + "title_ru = ?, "
+                        + "description_az = ?, "
+                        + "description_en = ?, "
+                        + "description_ru = ?, "
+                        + "update_date = now() where path like '%'||?||'%'";
+        try(Connection connection = dbConnect.getPostgresConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, form.getTitleAz());
+            preparedStatement.setString(2, form.getTitleEn());
+            preparedStatement.setString(3, form.getTitleRu());
+            preparedStatement.setString(4, form.getDescriptionAz());
+            preparedStatement.setString(5, form.getDescriptionEn());
+            preparedStatement.setString(6, form.getDescriptionRu());
+            preparedStatement.setString(7, form.getPath());
             preparedStatement.executeUpdate();
             
             operationResponse.setCode(ResultCode.OK);
@@ -550,6 +601,7 @@ public class AdminDao implements IAdminDao {
             
         try(Connection connection = dbConnect.getPostgresConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, productId);
             try(ResultSet resultSet = preparedStatement.executeQuery()) {
                 if(resultSet.next()) {
                     return new Product(resultSet.getInt("id"), 
@@ -595,7 +647,7 @@ public class AdminDao implements IAdminDao {
             try(ResultSet resultSet = preparedStatement.executeQuery()) {
                 while(resultSet.next()) {
                     String path = resultSet.getString("path").split("\\.")[0];
-                    list.add(new FileWrapper(path, resultSet.getString("path"), resultSet.getString("original_name"), resultSet.getString("file_type")));
+                    list.add(new FileWrapper(resultSet.getInt("id"), path, resultSet.getString("path"), resultSet.getString("original_name"), resultSet.getString("file_type")));
                 }
             }
             
@@ -1135,9 +1187,9 @@ public class AdminDao implements IAdminDao {
         OperationResponse operationResponse = new OperationResponse(ResultCode.ERROR);
         String query = "";
         if(form.getType() == 1)
-            query = "{call ndu_flower(?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+            query = "{call ndu_flower(?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
         else if(form.getType() == 2)
-            query = "{call ndu_gift(?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+            query = "{call ndu_gift(?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
         try(Connection connection = dbConnect.getPostgresConnection();
             CallableStatement callableStatement = connection.prepareCall(query)) {
             
@@ -1154,6 +1206,7 @@ public class AdminDao implements IAdminDao {
             callableStatement.setString(11, form.getPrice());
             callableStatement.setString(12, form.getSale());
             callableStatement.setInt(13, form.getCount());
+            callableStatement.setInt(14, form.getFavorite());
             callableStatement.executeUpdate();
             
             operationResponse.setCode(ResultCode.OK);

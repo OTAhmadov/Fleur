@@ -305,7 +305,7 @@ transition: all .3s ease-in-out;
         cursor: pointer;
 }
 
-#achievement_list .edit-achievement, #achievement_list .remove-achievement{
+#event_list .edit-event, #event_list .remove-event{
         margin-left: 6px;
         cursor: pointer;
 }
@@ -315,7 +315,7 @@ transition: all .3s ease-in-out;
         cursor: pointer;
 }
 
-#career_list .edit-career, #career_list .remove-career{
+#product_list .edit-product, #product_list .remove-product{
         margin-left: 6px;
         cursor: pointer;
 }

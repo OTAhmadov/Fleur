@@ -95,7 +95,7 @@
                 <div class="page-header float-right">
                     <div class="page-title">
                         <ol class="breadcrumb text-right">
-                            <li class="active add-achievement"><span class="fa fa-plus" style="cursor: pointer;"></span></li>
+                            <li class="active add-event"><span class="fa fa-plus" style="cursor: pointer;"></span></li>
                         </ol>
                     </div>
                 </div>
@@ -111,7 +111,7 @@
                                                     <strong class="card-title">Data Table</strong>
                                                 </div>-->
                         <div class="card-body">
-                            <table id="achievement_list" class="table table-striped table-bordered">
+                            <table id="event_list" class="table table-striped table-bordered">
                                 <thead>
                                     <tr>
                                         <th>Tarix</th>
@@ -129,20 +129,28 @@
                 </div>
             </div>
 
-            <div class="modal fade bs-example-modal-lg achievement_modal" tabicommon_selling_modalndex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+            <div class="modal fade bs-example-modal-lg event_modal" tabicommon_selling_modalndex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
 
                         <div class="modal-header">
                             <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>-->
-                            <h4 class="modal-title" id="myLargeModalLabel">Nailiyyət haqqında məlumat</h4>
+                            <h4 class="modal-title" id="myLargeModalLabel">Tədbirlər haqqında məlumat</h4>
                         </div>
                         <div class="modal-body">
-                            <form id="achievement-form">
+                            <form id="event-form">
                                 <div class="row form-group">
-                                    <div class="col col-md-3"><label for="product_name" class=" form-control-label">Tarix</label></div>
+                                    <div class="col col-md-3"><label for="product_name" class=" form-control-label">Başlama tarixi</label></div>
                                     <div class="col-12 col-md-9">
-                                        <input type="text" id="achievementDate" name="text-input" placeholder="" class="form-control" data-format="dd/mm/yyyy">
+                                        <input type="text" id="startDate" name="text-input" placeholder="" class="form-control" data-format="dd/mm/yyyy">
+                                        <!--<input type="text"  value="11-17-2015" id="demo-1">-->
+
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col col-md-3"><label for="product_name" class=" form-control-label">Bitmə tarixi</label></div>
+                                    <div class="col-12 col-md-9">
+                                        <input type="text" id="endDate" name="text-input" placeholder="" class="form-control" data-format="dd/mm/yyyy">
                                         <!--<input type="text"  value="11-17-2015" id="demo-1">-->
 
                                     </div>
@@ -196,7 +204,7 @@
                         <div class="modal-footer">
 
                             <button type="button" class="btn btn-default" data-dismiss="modal">Bağla</button>
-                            <button type="button" class="btn btn-primary btn-ndu-achievement">Təsdiq et</button>
+                            <button type="button" class="btn btn-primary btn-ndu-event">Təsdiq et</button>
 
                         </div>
                     </div>
@@ -210,30 +218,34 @@
                 $('#main-menu a i[data-type="event"]').parents('li').addClass('active');
                 
                 
-//                $('#achievementDate').fdatepicker({format: 'dd/mm/yyyy'})
+                    $('#startDate').fdatepicker({format: 'dd/mm/yyyy'});
+                    $('#endDate').fdatepicker({format: 'dd/mm/yyyy'});
 //                
-//                Product.Proxy.getAchievementList('', function (data) {
-//                    if (data && data.data) {
-//                        var html = '';
-//                            $.each(data.data, function (i, v) {
-//                                var descriptionLength = v.descriptionAz ? v.descriptionAz.length : 0;
-//                                var description = v.descriptionAz;
-//                                if(descriptionLength > 60) {
-//                                    description = v.descriptionAz.substring(0,60) + '...';
-//                                } 
-//                                html += '<tr>' +
-//                                        '<td>' + v.achievementDate + '</th>' +
-//                                        '<td>' + v.titleAz + '</td>' +
-//                                        '<td>' + description + '</td>' +
-//                                        '<td><i class="fa fa-remove remove-achievement" data-id="' + v.id + '"></i>' +
-//                                        '<i class="fa fa-edit edit-achievement" data-id = "' + v.id + '"></i></td>' +
-//                                        '</tr>'
-//                            })
-//                            $('#achievement_list tbody').html(html);
-                            $('#achievement_list').DataTable();
-//                    }
-//
-//                })
+                Product.Proxy.getEventList('', function (data) {
+                    if (data && data.data) {
+                        var html = '';
+                            $.each(data.data, function (i, v) {
+                                var descriptionLength = v.descriptionAz ? v.descriptionAz.length : 0;
+                                var description = v.descriptionAz;
+                                if(descriptionLength > 60) {
+                                    description = v.descriptionAz.substring(0,60) + '...';
+                                } 
+                                html += '<tr>' +
+                                        '<td>' + (v.startDate+' - '+ v.endDate) + '</th>' +
+                                        '<td>' + v.titleAz + '</td>' +
+                                        '<td>' + description + '</td>' +
+                                        '<td><i class="fa fa-remove remove-event" data-id="' + v.id + '"></i>' +
+                                        '<i class="fa fa-edit edit-event" data-id = "' + v.id + '"></i></td>' +
+                                        '</tr>'
+                            })
+                            $('#event_list tbody').html(html);
+                            $('#event_list').DataTable();
+                    } else {
+                        $('#event_list tbody').html('');
+                        $('#event_list').DataTable(); 
+                    }
+
+                })
 
             })
 
